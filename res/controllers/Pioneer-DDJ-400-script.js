@@ -122,15 +122,20 @@ PioneerDDJ400.loopAdjustMultiply = 50;
 
 // Beatjump pad (beatjump_size values)
 PioneerDDJ400.beatjumpSizeForPad = {
-    0x20: -1, // PAD 1
-    0x21: 1,  // PAD 2
-    0x22: -2, // PAD 3
-    0x23: 2,  // PAD 4
-    0x24: -4, // PAD 5
-    0x25: 4,  // PAD 6
-    0x26: -8, // PAD 7
-    0x27: 8   // PAD 8
+    0x20: -4,  // PAD 1
+    0x21: 4,   // PAD 2
+    0x22: -8,  // PAD 3
+    0x23: 8,   // PAD 4
+    0x24: -16, // PAD 5
+    0x25: 16,  // PAD 6
+    0x26: -32, // PAD 7
+    0x27: 32   // PAD 8
 };
+
+// Bank step and limits applied to the pad sizes above, as PAD 2 values
+PioneerDDJ400.beatjumpSizeFactor = 4;
+PioneerDDJ400.beatjumpSizeMin = 1;
+PioneerDDJ400.beatjumpSizeMax = 16;
 
 PioneerDDJ400.quickJumpSize = 32;
 
@@ -557,21 +562,23 @@ PioneerDDJ400.beatjumpPadPressed = function(_channel, control, value, _status, g
 };
 
 PioneerDDJ400.increaseBeatjumpSizes = function(_channel, control, value, _status, group) {
-    if (value === 0 || PioneerDDJ400.beatjumpSizeForPad[0x21] * 16 > 16) {
+    const factor = PioneerDDJ400.beatjumpSizeFactor;
+    if (value === 0 || PioneerDDJ400.beatjumpSizeForPad[0x21] * factor > PioneerDDJ400.beatjumpSizeMax) {
         return;
     }
     Object.keys(PioneerDDJ400.beatjumpSizeForPad).forEach(function(pad) {
-        PioneerDDJ400.beatjumpSizeForPad[pad] = PioneerDDJ400.beatjumpSizeForPad[pad] * 16;
+        PioneerDDJ400.beatjumpSizeForPad[pad] = PioneerDDJ400.beatjumpSizeForPad[pad] * factor;
     });
     engine.setValue(group, "beatjump_size", PioneerDDJ400.beatjumpSizeForPad[0x21]);
 };
 
 PioneerDDJ400.decreaseBeatjumpSizes = function(_channel, control, value, _status, group) {
-    if (value === 0 || PioneerDDJ400.beatjumpSizeForPad[0x21] / 16 < 1/16) {
+    const factor = PioneerDDJ400.beatjumpSizeFactor;
+    if (value === 0 || PioneerDDJ400.beatjumpSizeForPad[0x21] / factor < PioneerDDJ400.beatjumpSizeMin) {
         return;
     }
     Object.keys(PioneerDDJ400.beatjumpSizeForPad).forEach(function(pad) {
-        PioneerDDJ400.beatjumpSizeForPad[pad] = PioneerDDJ400.beatjumpSizeForPad[pad] / 16;
+        PioneerDDJ400.beatjumpSizeForPad[pad] = PioneerDDJ400.beatjumpSizeForPad[pad] / factor;
     });
     engine.setValue(group, "beatjump_size", PioneerDDJ400.beatjumpSizeForPad[0x21]);
 };
