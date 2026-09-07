@@ -1899,7 +1899,7 @@
             </control>
 
             <control>
-                <description>PAD 7 (DECK1) +SHift BEAT JUMP MODE - press - decrease Beatjump by a factor of 16</description>
+                <description>PAD 7 (DECK1) +SHift BEAT JUMP MODE - press - decrease Beatjump by a factor of 4</description>
                 <group>[Channel1]</group>
                 <key>PioneerDDJFLX4.decreaseBeatjumpSizes</key>
                 <status>0x98</status>
@@ -1909,7 +1909,7 @@
                 </options>
             </control>
             <control>
-                <description>PAD 7 (DECK2) +Shift BEAT JUMP MODE - press - decrease Beatjump by a factor of 16</description>
+                <description>PAD 7 (DECK2) +Shift BEAT JUMP MODE - press - decrease Beatjump by a factor of 4</description>
                 <group>[Channel2]</group>
                 <key>PioneerDDJFLX4.decreaseBeatjumpSizes</key>
                 <status>0x9A</status>
@@ -1919,7 +1919,7 @@
                 </options>
             </control>
             <control>
-                <description>PAD 8 (DECK1) +SHift BEAT JUMP MODE - press - increase Beatjump by a factor of 16</description>
+                <description>PAD 8 (DECK1) +SHift BEAT JUMP MODE - press - increase Beatjump by a factor of 4</description>
                 <group>[Channel1]</group>
                 <key>PioneerDDJFLX4.increaseBeatjumpSizes</key>
                 <status>0x98</status>
@@ -1929,7 +1929,7 @@
                 </options>
             </control>
             <control>
-                <description>PAD 8 (DECK2) +Shift BEAT JUMP MODE - press - increase Beatjump by a factor of 16</description>
+                <description>PAD 8 (DECK2) +Shift BEAT JUMP MODE - press - increase Beatjump by a factor of 4</description>
                 <group>[Channel2]</group>
                 <key>PioneerDDJFLX4.increaseBeatjumpSizes</key>
                 <status>0x9A</status>
