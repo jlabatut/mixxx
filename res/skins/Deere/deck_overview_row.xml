@@ -66,6 +66,19 @@
                 <SetVariable name="right_connection_control"><Variable name="group"/>,beats_translate_match_alignment</SetVariable>
               </Template>
 
+              <Template src="skin:left_right_1state_button.xml">
+                <SetVariable name="TooltipId">beats_measure_start_shift</SetVariable>
+                <SetVariable name="ObjectName">MeasureStartShiftButton</SetVariable>
+                <SetVariable name="MinimumSize"><Variable name="SquareButtonMinimumSize"/></SetVariable>
+                <SetVariable name="MaximumSize"><Variable name="SquareButtonMaximumSize"/></SetVariable>
+                <SetVariable name="SizePolicy"><Variable name="SquareButtonSizePolicy"/></SetVariable>
+                <SetVariable name="state_0_text"></SetVariable>
+                <SetVariable name="state_0_pressed">icon/ic_measure_start_shift_48px.svg</SetVariable>
+                <SetVariable name="state_0_unpressed">icon/ic_measure_start_shift_48px.svg</SetVariable>
+                <SetVariable name="left_connection_control"><Variable name="group"/>,beats_measure_start_earlier</SetVariable>
+                <SetVariable name="right_connection_control"><Variable name="group"/>,beats_measure_start_later</SetVariable>
+              </Template>
+
             </Children>
           </WidgetGroup>
 

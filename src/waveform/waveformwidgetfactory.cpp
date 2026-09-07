@@ -144,6 +144,8 @@ WaveformWidgetFactory::WaveformWidgetFactory()
           m_openGlesAvailable(false),
           m_openGLShaderAvailable(false),
           m_beatGridAlpha(90),
+          m_measureMarkersEnabled(true),
+          m_beatsPerMeasure(WaveformWidgetRenderer::s_defaultBeatsPerMeasure),
           m_vsyncThread(nullptr),
           m_pGuiTick(nullptr),
           m_pVisualsManager(nullptr),
@@ -401,6 +403,14 @@ bool WaveformWidgetFactory::setConfig(UserSettingsPointer config) {
     int beatGridAlpha = m_config->getValue(ConfigKey("[Waveform]", "beatGridAlpha"), m_beatGridAlpha);
     setDisplayBeatGridAlpha(beatGridAlpha);
 
+    m_measureMarkersEnabled = m_config->getValue(
+            ConfigKey("[Waveform]", "MeasureMarkers"), m_measureMarkersEnabled);
+    m_beatsPerMeasure = math_clamp(
+            m_config->getValue(ConfigKey("[Waveform]", "BeatsPerMeasure"), m_beatsPerMeasure),
+            WaveformWidgetRenderer::s_minBeatsPerMeasure,
+            WaveformWidgetRenderer::s_maxBeatsPerMeasure);
+    applyBeatsPerMeasure();
+
     WaveformWidgetType::Type type = static_cast<WaveformWidgetType::Type>(
             m_config->getValueString(ConfigKey("[Waveform]","WaveformType")).toInt(&ok));
     // Store the widget type on m_configType for later initialization.
@@ -539,6 +549,7 @@ bool WaveformWidgetFactory::setWaveformWidget(WWaveformViewer* viewer,
 
     viewer->setZoom(m_defaultZoom);
     viewer->setDisplayBeatGridAlpha(m_beatGridAlpha);
+    viewer->setBeatsPerMeasure(effectiveBeatsPerMeasure());
     viewer->setPlayMarkerPosition(m_playMarkerPosition);
     waveformWidget->resize(viewer->width(), viewer->height());
     waveformWidget->getWidget()->show();
@@ -665,6 +676,7 @@ bool WaveformWidgetFactory::setWidgetTypeFromHandle(int handleIndex, bool force)
         viewer->setZoom(previousZoom);
         viewer->setPlayMarkerPosition(previousPlayMarkerPosition);
         viewer->setDisplayBeatGridAlpha(previousbeatgridAlpha);
+        viewer->setBeatsPerMeasure(effectiveBeatsPerMeasure());
         // resize() doesn't seem to get called on the widget. I think Qt skips
         // it since the size didn't change.
         //viewer->resize(viewer->size());
@@ -714,6 +726,30 @@ void WaveformWidgetFactory::setDisplayBeatGridAlpha(int alpha) {
 
     for (const auto& holder : std::as_const(m_waveformWidgetHolders)) {
         holder.m_waveformWidget->setDisplayBeatGridAlpha(m_beatGridAlpha);
+    }
+}
+
+void WaveformWidgetFactory::setMeasureMarkersEnabled(bool enabled) {
+    m_measureMarkersEnabled = enabled;
+    if (m_config) {
+        m_config->setValue(ConfigKey("[Waveform]", "MeasureMarkers"), m_measureMarkersEnabled);
+    }
+    applyBeatsPerMeasure();
+}
+
+void WaveformWidgetFactory::setBeatsPerMeasure(int beatsPerMeasure) {
+    m_beatsPerMeasure = math_clamp(beatsPerMeasure,
+            WaveformWidgetRenderer::s_minBeatsPerMeasure,
+            WaveformWidgetRenderer::s_maxBeatsPerMeasure);
+    if (m_config) {
+        m_config->setValue(ConfigKey("[Waveform]", "BeatsPerMeasure"), m_beatsPerMeasure);
+    }
+    applyBeatsPerMeasure();
+}
+
+void WaveformWidgetFactory::applyBeatsPerMeasure() {
+    for (const auto& holder : std::as_const(m_waveformWidgetHolders)) {
+        holder.m_waveformWidget->setBeatsPerMeasure(effectiveBeatsPerMeasure());
     }
 }
 

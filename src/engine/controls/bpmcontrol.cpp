@@ -117,6 +117,20 @@ BpmControl::BpmControl(const QString& group,
             this,
             &BpmControl::slotTranslateBeatsMove,
             Qt::DirectConnection);
+    m_pMeasureStartEarlier = std::make_unique<ControlPushButton>(
+            ConfigKey(group, "beats_measure_start_earlier"), false);
+    connect(m_pMeasureStartEarlier.get(),
+            &ControlObject::valueChanged,
+            this,
+            &BpmControl::slotMeasureStartEarlier,
+            Qt::DirectConnection);
+    m_pMeasureStartLater = std::make_unique<ControlPushButton>(
+            ConfigKey(group, "beats_measure_start_later"), false);
+    connect(m_pMeasureStartLater.get(),
+            &ControlObject::valueChanged,
+            this,
+            &BpmControl::slotMeasureStartLater,
+            Qt::DirectConnection);
 
     m_pBeatsHalve = std::make_unique<ControlPushButton>(ConfigKey(group, "beats_set_halve"), false);
     connect(m_pBeatsHalve.get(),
@@ -313,6 +327,40 @@ void BpmControl::slotTranslateBeatsLater(double v) {
         return;
     }
     slotTranslateBeatsMove(1);
+}
+
+void BpmControl::slotMeasureStartEarlier(double v) {
+    if (v <= 0) {
+        return;
+    }
+    translateMeasureStart(-1.0);
+}
+
+void BpmControl::slotMeasureStartLater(double v) {
+    if (v <= 0) {
+        return;
+    }
+    translateMeasureStart(1.0);
+}
+
+// translateMeasureStart works only with constant BPM tracks
+void BpmControl::translateMeasureStart(double beats) {
+    const TrackPointer pTrack = getEngineBuffer()->getLoadedTrack();
+    if (!pTrack) {
+        return;
+    }
+    const mixxx::BeatsPointer pBeats = pTrack->getBeats();
+    if (!pBeats || !pBeats->hasConstantTempo()) {
+        return;
+    }
+    // Moving the reference downbeat by whole beats leaves the beats where they
+    // are, it only changes which of them starts a measure.
+    const auto beatLengthFrames = pBeats->cfirstmarker().beatLengthFrames();
+    const auto newBeats = pBeats->tryTranslate(beats * beatLengthFrames);
+    if (!newBeats) {
+        return;
+    }
+    pTrack->trySetBeats(*newBeats);
 }
 
 void BpmControl::slotTranslateBeatsMove(double v) {

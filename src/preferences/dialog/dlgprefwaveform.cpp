@@ -110,6 +110,14 @@ DlgPrefWaveform::DlgPrefWaveform(
             QOverload<int>::of(&QSpinBox::valueChanged),
             endOfTrackWarningTimeSlider,
             &QSlider::setValue);
+    connect(measureMarkersCheckBox,
+            &QCheckBox::toggled,
+            this,
+            &DlgPrefWaveform::slotSetMeasureMarkers);
+    connect(beatsPerMeasureSpinBox,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &DlgPrefWaveform::slotSetBeatsPerMeasure);
     connect(beatGridAlphaSlider,
             &QSlider::valueChanged,
             beatGridAlphaSpinBox,
@@ -210,6 +218,10 @@ void DlgPrefWaveform::slotUpdate() {
     }
 
     updateEnableUntilMark();
+    // Set before the enabled state below, which is derived from the check box.
+    measureMarkersCheckBox->setChecked(factory->areMeasureMarkersEnabled());
+    beatsPerMeasureSpinBox->setValue(factory->getBeatsPerMeasure());
+    beatsPerMeasureSpinBox->setEnabled(measureMarkersCheckBox->isChecked());
 
     frameRateSpinBox->setValue(factory->getFrameRate());
     frameRateSlider->setValue(factory->getFrameRate());
@@ -299,6 +311,10 @@ void DlgPrefWaveform::slotResetToDefaults() {
     // Beat grid alpha default is 90
     beatGridAlphaSlider->setValue(90);
     beatGridAlphaSpinBox->setValue(90);
+
+    // Measure markers on, every 4 beats
+    measureMarkersCheckBox->setChecked(true);
+    beatsPerMeasureSpinBox->setValue(WaveformWidgetRenderer::s_defaultBeatsPerMeasure);
 
     // 50 (center) is default
     playMarkerPositionSlider->setValue(50);
@@ -391,6 +407,15 @@ void DlgPrefWaveform::slotSetBeatGridAlpha(int alpha) {
     // the other waveform controls.
     m_pConfig->setValue(ConfigKey("[Waveform]", "beatGridAlpha"), alpha);
     WaveformWidgetFactory::instance()->setDisplayBeatGridAlpha(alpha);
+}
+
+void DlgPrefWaveform::slotSetMeasureMarkers(bool enabled) {
+    WaveformWidgetFactory::instance()->setMeasureMarkersEnabled(enabled);
+    beatsPerMeasureSpinBox->setEnabled(enabled);
+}
+
+void DlgPrefWaveform::slotSetBeatsPerMeasure(int beatsPerMeasure) {
+    WaveformWidgetFactory::instance()->setBeatsPerMeasure(beatsPerMeasure);
 }
 
 void DlgPrefWaveform::slotSetPlayMarkerPosition(int position) {
