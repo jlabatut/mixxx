@@ -195,15 +195,20 @@ PioneerDDJFLX4.loopAdjustMultiply = 50;
 
 // Beatjump pad (beatjump_size values)
 PioneerDDJFLX4.beatjumpSizeForPad = {
-    0x20: -1, // PAD 1
-    0x21: 1,  // PAD 2
-    0x22: -2, // PAD 3
-    0x23: 2,  // PAD 4
-    0x24: -4, // PAD 5
-    0x25: 4,  // PAD 6
-    0x26: -8, // PAD 7
-    0x27: 8   // PAD 8
+    0x20: -4,  // PAD 1
+    0x21: 4,   // PAD 2
+    0x22: -8,  // PAD 3
+    0x23: 8,   // PAD 4
+    0x24: -16, // PAD 5
+    0x25: 16,  // PAD 6
+    0x26: -32, // PAD 7
+    0x27: 32   // PAD 8
 };
+
+// Bank step and limits applied to the pad sizes above, as PAD 2 values
+PioneerDDJFLX4.beatjumpSizeFactor = 4;
+PioneerDDJFLX4.beatjumpSizeMin = 1;
+PioneerDDJFLX4.beatjumpSizeMax = 16;
 
 // Stems (KEYBOARD) pads mode status for deck 1 and 2, without or with SHIFT pressed
 PioneerDDJFLX4.stemsPadsModesStatus = {
@@ -691,21 +696,23 @@ PioneerDDJFLX4.beatjumpPadPressed = function(_channel, control, value, _status, 
 };
 
 PioneerDDJFLX4.increaseBeatjumpSizes = function(_channel, control, value, _status, group) {
-    if (value === 0 || PioneerDDJFLX4.beatjumpSizeForPad[0x21] * 16 > 16) {
+    const factor = PioneerDDJFLX4.beatjumpSizeFactor;
+    if (value === 0 || PioneerDDJFLX4.beatjumpSizeForPad[0x21] * factor > PioneerDDJFLX4.beatjumpSizeMax) {
         return;
     }
     Object.keys(PioneerDDJFLX4.beatjumpSizeForPad).forEach(function(pad) {
-        PioneerDDJFLX4.beatjumpSizeForPad[pad] = PioneerDDJFLX4.beatjumpSizeForPad[pad] * 16;
+        PioneerDDJFLX4.beatjumpSizeForPad[pad] = PioneerDDJFLX4.beatjumpSizeForPad[pad] * factor;
     });
     engine.setValue(group, "beatjump_size", PioneerDDJFLX4.beatjumpSizeForPad[0x21]);
 };
 
 PioneerDDJFLX4.decreaseBeatjumpSizes = function(_channel, control, value, _status, group) {
-    if (value === 0 || PioneerDDJFLX4.beatjumpSizeForPad[0x21] / 16 < 1/16) {
+    const factor = PioneerDDJFLX4.beatjumpSizeFactor;
+    if (value === 0 || PioneerDDJFLX4.beatjumpSizeForPad[0x21] / factor < PioneerDDJFLX4.beatjumpSizeMin) {
         return;
     }
     Object.keys(PioneerDDJFLX4.beatjumpSizeForPad).forEach(function(pad) {
-        PioneerDDJFLX4.beatjumpSizeForPad[pad] = PioneerDDJFLX4.beatjumpSizeForPad[pad] / 16;
+        PioneerDDJFLX4.beatjumpSizeForPad[pad] = PioneerDDJFLX4.beatjumpSizeForPad[pad] / factor;
     });
     engine.setValue(group, "beatjump_size", PioneerDDJFLX4.beatjumpSizeForPad[0x21]);
 };
