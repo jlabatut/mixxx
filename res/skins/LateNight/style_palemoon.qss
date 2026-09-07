@@ -2429,6 +2429,13 @@ WPushButton#PlayDeck[value="0"] {
     #BeatsFaster[pressed="true"] {
       image: url(skins:LateNight/palemoon/buttons/btn__beats_faster_active.svg) no-repeat center center;
     }
+  #MeasureStartShift {
+    image: url(skins:LateNight/palemoon/buttons/btn__measure_shift.svg) no-repeat center center;
+    }
+    #MeasureStartShift[pressed="true"] {
+      image: url(skins:LateNight/palemoon/buttons/btn__measure_shift_active.svg) no-repeat center center;
+    }
+
   #HotcuesEarlier {
     image: url(skins:LateNight/palemoon/buttons/btn__beats_hotcues_earlier.svg) no-repeat center center;
     }

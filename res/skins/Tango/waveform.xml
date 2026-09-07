@@ -142,13 +142,27 @@ Variables:
             <SizePolicy>f,f</SizePolicy>
             <Children>
 
-              <Template src="skins:Tango/controls/button_1state_right_optional.xml">
-                <SetVariable name="TooltipId">beats_translate_curpos</SetVariable>
-                <SetVariable name="ObjectName">BeatgridCurpos</SetVariable>
-                <SetVariable name="Size">24f,49f</SetVariable>
-                <SetVariable name="ConfigKey"><Variable name="Group"/>,beats_translate_curpos</SetVariable>
-                <SetVariable name="ConfigKeyRight"><Variable name="Group"/>,beats_translate_match_alignment</SetVariable>
-              </Template>
+              <WidgetGroup><!-- curpos & measure markers -->
+                <Layout>vertical</Layout>
+                <SizePolicy>f,f</SizePolicy>
+                <Children>
+                  <Template src="skins:Tango/controls/button_1state_right_optional.xml">
+                    <SetVariable name="TooltipId">beats_translate_curpos</SetVariable>
+                    <SetVariable name="ObjectName">BeatgridCurpos</SetVariable>
+                    <SetVariable name="Size">24f,25f</SetVariable>
+                    <SetVariable name="ConfigKey"><Variable name="Group"/>,beats_translate_curpos</SetVariable>
+                    <SetVariable name="ConfigKeyRight"><Variable name="Group"/>,beats_translate_match_alignment</SetVariable>
+                  </Template>
+
+                  <Template src="skins:Tango/controls/button_1state_right_optional.xml">
+                    <SetVariable name="TooltipId">beats_measure_start_shift</SetVariable>
+                    <SetVariable name="ObjectName">BeatgridMeasureShift</SetVariable>
+                    <SetVariable name="Size">24f,24f</SetVariable>
+                    <SetVariable name="ConfigKey"><Variable name="Group"/>,beats_measure_start_earlier</SetVariable>
+                    <SetVariable name="ConfigKeyRight"><Variable name="Group"/>,beats_measure_start_later</SetVariable>
+                  </Template>
+                </Children>
+              </WidgetGroup><!-- /curpos & measure markers -->
 
               <WidgetGroup><!-- beats earlier & faster -->
                 <Layout>vertical</Layout>

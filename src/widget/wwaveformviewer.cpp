@@ -266,6 +266,12 @@ void WWaveformViewer::setDisplayBeatGridAlpha(int alpha) {
     }
 }
 
+void WWaveformViewer::setBeatsPerMeasure(int beatsPerMeasure) {
+    if (m_waveformWidget) {
+        m_waveformWidget->setBeatsPerMeasure(beatsPerMeasure);
+    }
+}
+
 void WWaveformViewer::setPlayMarkerPosition(double position) {
     if (m_waveformWidget) {
         m_waveformWidget->setPlayMarkerPosition(position);

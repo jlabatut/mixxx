@@ -1973,6 +1973,9 @@ WPushButton#BpmLockToggle[value="1"] {
     #BeatsFaster {
       image: url(skins:LateNight/classic/buttons/btn__beats_faster.svg) no-repeat center center;
     }
+    #MeasureStartShift {
+      image: url(skins:LateNight/classic/buttons/btn__measure_shift.svg) no-repeat center center;
+    }
     #HotcuesEarlier {
       image: url(skins:LateNight/classic/buttons/btn__beats_hotcues_earlier.svg) no-repeat center center;
     }

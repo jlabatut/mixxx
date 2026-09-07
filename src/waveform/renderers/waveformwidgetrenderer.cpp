@@ -33,6 +33,7 @@ WaveformWidgetRenderer::WaveformWidgetRenderer(const QString& group)
           m_visualSamplePerPixel(1.0),
           m_audioSamplePerPixel(1.0),
           m_alphaBeatGrid(90),
+          m_beatsPerMeasure(s_defaultBeatsPerMeasure),
           // Really create some to manage those;
           m_visualPlayPosition(nullptr),
           m_totalVSamples(0),
@@ -414,6 +415,12 @@ void WaveformWidgetRenderer::setZoom(double zoom) {
 
 void WaveformWidgetRenderer::setDisplayBeatGridAlpha(int alpha) {
     m_alphaBeatGrid = alpha;
+}
+
+void WaveformWidgetRenderer::setBeatsPerMeasure(int beatsPerMeasure) {
+    m_beatsPerMeasure = beatsPerMeasure > 0
+            ? math_clamp(beatsPerMeasure, s_minBeatsPerMeasure, s_maxBeatsPerMeasure)
+            : 0;
 }
 
 void WaveformWidgetRenderer::setTrack(TrackPointer track) {
