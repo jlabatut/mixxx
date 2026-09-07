@@ -497,6 +497,9 @@ WWidgetGroup {
   #BeatgridCurpos {
     image: url(skin:/../Tango/buttons/btn_beats_curpos.svg) no-repeat center center;
   }
+  #BeatgridMeasureShift {
+    image: url(skin:/../Tango/buttons/btn_measure_shift.svg) no-repeat center center;
+  }
   #BpmLock[value="0"] {
     image: url(skin:/../Tango/buttons/btn_bpm_unlocked.svg) no-repeat center center;
     }

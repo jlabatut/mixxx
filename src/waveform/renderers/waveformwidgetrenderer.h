@@ -22,6 +22,10 @@ class WaveformWidgetRenderer {
     static const double s_waveformDefaultZoom;
     static const double s_defaultPlayMarkerPosition;
 
+    static constexpr int s_defaultBeatsPerMeasure = 4;
+    static constexpr int s_minBeatsPerMeasure = 2;
+    static constexpr int s_maxBeatsPerMeasure = 16;
+
     struct WaveformMarkOnScreen {
         WaveformMarkPointer m_pMark;
         int m_offsetOnScreen;
@@ -77,6 +81,8 @@ class WaveformWidgetRenderer {
 
     void setDisplayBeatGrid(bool set);
     void setDisplayBeatGridAlpha(int alpha);
+    /// Number of beats between two measure markers, 0 disables them.
+    void setBeatsPerMeasure(int beatsPerMeasure);
 
     double getVisualSamplePerPixel() const {
         return m_visualSamplePerPixel;
@@ -134,6 +140,18 @@ class WaveformWidgetRenderer {
 
     int getBeatGridAlpha() const {
         return m_alphaBeatGrid;
+    }
+
+    int getBeatsPerMeasure() const {
+        return m_beatsPerMeasure;
+    }
+
+    /// True if the beat with this index, counted from the first beat marker of
+    /// the beatgrid, starts a measure.
+    bool isMeasureStart(int beatIndex) const {
+        return m_beatsPerMeasure > 1 &&
+                (((beatIndex % m_beatsPerMeasure) + m_beatsPerMeasure) %
+                        m_beatsPerMeasure) == 0;
     }
 
     virtual void resizeRenderer(int width, int height, float devicePixelRatio);
@@ -213,6 +231,7 @@ class WaveformWidgetRenderer {
     double m_audioSamplePerPixel;
 
     int m_alphaBeatGrid;
+    int m_beatsPerMeasure;
 
     //TODO: vRince create some class to manage control/value
     //ControlConnection

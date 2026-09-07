@@ -61,6 +61,7 @@ class WWaveformViewer : public WWidget, public TrackDropTarget {
     //direct access to let factory sync/set default zoom
     void setZoom(double zoom);
     void setDisplayBeatGridAlpha(int alpha);
+    void setBeatsPerMeasure(int beatsPerMeasure);
     void setPlayMarkerPosition(double position);
 
   private:

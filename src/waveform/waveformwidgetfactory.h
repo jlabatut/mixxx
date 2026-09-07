@@ -142,6 +142,16 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     void setDisplayBeatGridAlpha(int alpha);
     int getBeatGridAlpha() const { return m_beatGridAlpha; }
 
+    void setMeasureMarkersEnabled(bool enabled);
+    bool areMeasureMarkersEnabled() const {
+        return m_measureMarkersEnabled;
+    }
+
+    void setBeatsPerMeasure(int beatsPerMeasure);
+    int getBeatsPerMeasure() const {
+        return m_beatsPerMeasure;
+    }
+
     void setVisualGain(FilterIndex index, double gain);
     double getVisualGain(FilterIndex index) const;
 
@@ -205,6 +215,12 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     WaveformWidgetType::Type findTypeFromHandleIndex(int index);
     QString getDisplayNameFromType(WaveformWidgetType::Type type);
 
+    /// Beats per measure as seen by the renderers, 0 when the markers are off.
+    int effectiveBeatsPerMeasure() const {
+        return m_measureMarkersEnabled ? m_beatsPerMeasure : 0;
+    }
+    void applyBeatsPerMeasure();
+
     //All type of available widgets
 
     QVector<WaveformWidgetAbstractHandle> m_waveformWidgetHandles;
@@ -236,6 +252,8 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     QString m_openGLVersion;
     bool m_openGLShaderAvailable;
     int m_beatGridAlpha;
+    bool m_measureMarkersEnabled;
+    int m_beatsPerMeasure;
 
     VSyncThread* m_vsyncThread;
     GuiTick* m_pGuiTick;  // not owned

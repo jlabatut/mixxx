@@ -166,6 +166,15 @@
                       </Template>
 
                       <Template src="skin:left_right_1state_button_optional.xml">
+                        <SetVariable name="TooltipId">beats_measure_start_shift</SetVariable>
+                        <SetVariable name="ObjectName">MeasureStartShiftButton</SetVariable>
+                        <SetVariable name="state_0_pressed">icon/ic_measure_start_shift_48px.svg</SetVariable>
+                        <SetVariable name="state_0_unpressed">icon/ic_measure_start_shift_48px.svg</SetVariable>
+                        <SetVariable name="left_connection_control"><Variable name="group"/>,beats_measure_start_earlier</SetVariable>
+                        <SetVariable name="right_connection_control"><Variable name="group"/>,beats_measure_start_later</SetVariable>
+                      </Template>
+
+                      <Template src="skin:left_right_1state_button_optional.xml">
                         <SetVariable name="TooltipId">tempo_tap_bpm_tap</SetVariable>
                         <SetVariable name="ObjectName">BeatsTranslateCurposButton</SetVariable>
                         <SetVariable name="MinimumSize">44,22</SetVariable>

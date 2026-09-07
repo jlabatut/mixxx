@@ -449,6 +449,14 @@ void Tooltips::addStandardTooltips() {
             << tr("Adjust Beatgrid")
             << tr("Adjust beatgrid to match another playing deck.");
 
+    add("beats_measure_start_shift")
+            << tr("Move Measure Markers")
+            << QString("%1: %2").arg(leftClick,
+                       tr("Move the measure markers one beat earlier."))
+            << QString("%1: %2").arg(rightClick,
+                       tr("Move the measure markers one beat later."))
+            << tr("The beatgrid itself is not moved. Constant tempo tracks only.");
+
     add("beats_undo_adjustment")
             << tr("Revert last BPM/Beatgrid Change")
             << tr("Revert last BPM/Beatgrid Change of the loaded track.");

@@ -27,7 +27,9 @@ class allshader::WaveformRenderBeat final : public allshader::WaveformRenderer {
   private:
     mixxx::UnicolorShader m_shader;
     QColor m_color;
+    QColor m_measureColor;
     VertexData m_vertices;
+    VertexData m_measureVertices;
 
     bool m_isSlipRenderer;
 
