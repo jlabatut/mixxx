@@ -924,6 +924,7 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/engine/sidechain/enginesidechain.cpp
   src/engine/sidechain/networkinputstreamworker.cpp
   src/engine/sidechain/networkoutputstreamworker.cpp
+  src/engine/startstopramp.cpp
   src/engine/sync/enginesync.cpp
   src/engine/sync/internalclock.cpp
   src/engine/sync/synccontrol.cpp
@@ -2218,6 +2219,7 @@ if(BUILD_TESTING)
     src/test/soundproxy_test.cpp
     src/test/soundsourceproviderregistrytest.cpp
     src/test/sqliteliketest.cpp
+    src/test/startstopramptest.cpp
     src/test/synccontroltest.cpp
     src/test/synctrackmetadatatest.cpp
     src/test/tableview_test.cpp

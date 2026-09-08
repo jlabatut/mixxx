@@ -68,6 +68,7 @@ EngineBuffer::EngineBuffer(const QString& group,
           m_pRateControl(nullptr),
           m_pBpmControl(nullptr),
           m_pKeyControl(nullptr),
+          m_bIsPrimaryDeck(pChannel && pChannel->isPrimaryDeck()),
           m_pReadAheadManager(nullptr),
           m_pReader(nullptr),
           m_playPos(kInitialPlayPosition),
@@ -154,6 +155,9 @@ EngineBuffer::EngineBuffer(const QString& group,
 
     m_pSlipButton = new ControlPushButton(ConfigKey(m_group, "slip_enabled"));
     m_pSlipButton->setButtonMode(ControlPushButton::TOGGLE);
+
+    // Spins a playing deck down while held, like a hand on the platter.
+    m_pPlatterBrake = new ControlPushButton(ConfigKey(m_group, "platter_brake"));
 
     m_playposSlider = new ControlLinPotmeter(
         ConfigKey(m_group, "playposition"), 0.0, 1.0, 0, 0, true);
@@ -309,6 +313,7 @@ EngineBuffer::~EngineBuffer() {
     delete m_playposSlider;
 
     delete m_pSlipButton;
+    delete m_pPlatterBrake;
     delete m_pRepeat;
     delete m_pSampleRate;
 
@@ -554,6 +559,10 @@ void EngineBuffer::slotTrackLoaded(TrackPointer pTrack,
     m_slipPos = mixxx::audio::kStartFramePos;
     m_dSlipRate = 0;
     m_slipModeState = SlipModeState::Disabled;
+
+    // A controller unplugged while its platter was held would leave the deck
+    // silent with no way to release it.
+    m_pPlatterBrake->set(0);
 
     m_pReplayGain->set(pTrack->getReplayGain().getRatio());
 
@@ -899,6 +908,23 @@ void EngineBuffer::processTrackLocked(
             iBufferSize,
             &is_scratching,
             &is_reverse);
+
+    // Ramp the speed down when pausing and up when starting again, so the deck
+    // spins down and up like a turntable. Cue previews and vinyl control keep
+    // their instant start and stop.
+    bool rampInstantly = !m_bIsPrimaryDeck || m_pCueControl->isPreviewing();
+#ifdef __VINYLCONTROL__
+    rampInstantly = rampInstantly ||
+            (m_pVinylControlControl && m_pVinylControlControl->isEnabled());
+#endif
+    speed = m_startStopRamp.process(speed,
+            paused,
+            m_pPlatterBrake->toBool(),
+            rampInstantly,
+            m_previousBufferSeek,
+            iBufferSize,
+            sampleRate,
+            &is_scratching);
 
     bool useIndependentPitchAndTempoScaling = false;
 
