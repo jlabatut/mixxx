@@ -200,6 +200,8 @@ class CueControl : public EngineControl {
     bool isTrackAtIntroCue();
     void resetIndicators();
     bool isPlayingByPlayButton();
+    /// True while a cue or hotcue is held down to preview the track.
+    bool isPreviewing() const;
     bool getPlayFlashingAtPause();
     SeekOnLoadMode getSeekOnLoadPreference();
     void trackLoaded(TrackPointer pNewTrack) override;
