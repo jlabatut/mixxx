@@ -237,6 +237,13 @@ ControlPickerMenu::ControlPickerMenu(QWidget* pParent)
             tr("Slip Mode"),
             tr("Toggle slip mode"),
             pTransportMenu);
+    addDeckControl("platter_brake",
+            tr("Platter Brake"),
+            tr("Spins the deck down while held and back up when released, "
+               "like a hand on a turntable platter. Map it to a jog wheel "
+               "touch sensor. The durations are the vinyl brake and start "
+               "times in the deck preferences."),
+            pTransportMenu);
 
     // BPM / Beatgrid
     QMenu* pBpmMenu = addSubmenu(tr("BPM / Beatgrid"));

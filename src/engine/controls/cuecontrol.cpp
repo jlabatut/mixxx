@@ -8,6 +8,7 @@
 #include "preferences/colorpalettesettings.h"
 #include "track/track.h"
 #include "util/color/predefinedcolorpalettes.h"
+#include "util/compatibility/qatomic.h"
 #include "vinylcontrol/defs_vinylcontrol.h"
 
 namespace {
@@ -2207,6 +2208,10 @@ void CueControl::updateIndicators() {
 void CueControl::resetIndicators() {
     m_pCueIndicator->setBlinkValue(ControlIndicator::OFF);
     m_pPlayIndicator->setBlinkValue(ControlIndicator::OFF);
+}
+
+bool CueControl::isPreviewing() const {
+    return atomicLoadRelaxed(m_currentlyPreviewingIndex) != Cue::kNoHotCue;
 }
 
 CueControl::TrackAt CueControl::getTrackAt() const {

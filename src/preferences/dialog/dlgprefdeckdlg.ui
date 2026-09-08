@@ -638,6 +638,83 @@ You can always drag-and-drop tracks on screen to clone a deck.</string>
           </property>
          </spacer>
         </item>
+        <item row="12" column="0">
+         <spacer name="verticalSpacer3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>15</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="13" column="0">
+         <widget class="QLabel" name="labelVinylBrakeTime">
+          <property name="text">
+           <string>Vinyl brake time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="13" column="1">
+         <widget class="QDoubleSpinBox" name="spinBoxVinylBrakeTime">
+          <property name="toolTip">
+           <string>Time the deck takes to spin down to a stop when playback is paused, or while a jog wheel touch sensor holds the platter, like a turntable slowing down under its brake. Set to 0 to stop instantly.</string>
+          </property>
+          <property name="accelerated">
+           <bool>true</bool>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="decimals">
+           <number>2</number>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="14" column="0">
+         <widget class="QLabel" name="labelVinylSoftStartTime">
+          <property name="text">
+           <string>Vinyl start time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="14" column="1">
+         <widget class="QDoubleSpinBox" name="spinBoxVinylSoftStartTime">
+          <property name="toolTip">
+           <string>Time the deck takes to spin up to full speed when playback starts, or when a held platter is released, like a turntable getting up to speed. Set to 0 to start instantly.</string>
+          </property>
+          <property name="accelerated">
+           <bool>true</bool>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="decimals">
+           <number>2</number>
+          </property>
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -685,6 +762,8 @@ You can always drag-and-drop tracks on screen to clone a deck.</string>
   <tabstop>spinBoxTemporaryRateCoarse</tabstop>
   <tabstop>spinBoxPermanentRateFine</tabstop>
   <tabstop>spinBoxPermanentRateCoarse</tabstop>
+  <tabstop>spinBoxVinylBrakeTime</tabstop>
+  <tabstop>spinBoxVinylSoftStartTime</tabstop>
  </tabstops>
  <resources/>
  <buttongroups>

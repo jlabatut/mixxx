@@ -12,6 +12,7 @@
 #include "engine/cachingreader/cachingreader.h"
 #include "engine/engineobject.h"
 #include "engine/slipmodestate.h"
+#include "engine/startstopramp.h"
 #include "engine/sync/syncable.h"
 #include "preferences/usersettings.h"
 #include "track/bpm.h"
@@ -325,6 +326,11 @@ class EngineBuffer : public EngineObject {
 
     QList<EngineControl*> m_engineControls;
 
+    // Spins the deck down and up like a turntable when pausing and starting.
+    // Only decks do, samplers and preview decks start and stop instantly.
+    StartStopRamp m_startStopRamp;
+    const bool m_bIsPrimaryDeck;
+
     // The read ahead manager for EngineBufferScale's that need to read ahead
     ReadAheadManager* m_pReadAheadManager;
 
@@ -396,6 +402,9 @@ class EngineBuffer : public EngineObject {
     ControlPushButton* m_stopButton;
 
     ControlPushButton* m_pSlipButton;
+
+    // Held down while a hand rests on the platter, see StartStopRamp.
+    ControlPushButton* m_pPlatterBrake;
 
     ControlObject* m_pQuantize;
     ControlPotmeter* m_playposSlider;

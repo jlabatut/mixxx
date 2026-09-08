@@ -86,6 +86,8 @@ class DlgPrefDeck : public DlgPreferencePage, public Ui::DlgPrefDeckDlg  {
     void slotCloneDeckOnLoadDoubleTapCheckbox(bool);
     void slotRateRampingModeLinearButton(bool);
     void slotRateRampSensitivitySlider(int);
+    void slotVinylBrakeTimeSpinbox(double);
+    void slotVinylSoftStartTimeSpinbox(double);
 
     void slotTimeFormatChanged(double);
 
@@ -146,4 +148,6 @@ class DlgPrefDeck : public DlgPreferencePage, public Ui::DlgPrefDeckDlg  {
     double m_dRateTempFine;
     double m_dRatePermCoarse;
     double m_dRatePermFine;
+    double m_dVinylBrakeTime;
+    double m_dVinylSoftStartTime;
 };

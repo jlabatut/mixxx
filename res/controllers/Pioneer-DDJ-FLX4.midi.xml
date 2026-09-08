@@ -216,8 +216,8 @@
                 </options>
             </control>
             <control>
-                <description>JOG DIAL PLATTER (DECK1) - touch - enable (on touch) / disable (on release) Scratching/Pitch
-                    bend
+                <description>JOG DIAL PLATTER (DECK1) - touch - brake the deck (on touch) / spin it back
+                    up (on release), and hand over to scratching once the platter turns
                 </description>
                 <group>[Channel1]</group>
                 <key>PioneerDDJFLX4.jogTouch</key>
@@ -281,8 +281,8 @@
                 </options>
             </control>
             <control>
-                <description>JOG DIAL PLATTER (DECK2) - touch - enable (on touch) / disable (on release) Scratching/Pitch
-                    bend
+                <description>JOG DIAL PLATTER (DECK2) - touch - brake the deck (on touch) / spin it back
+                    up (on release), and hand over to scratching once the platter turns
                 </description>
                 <group>[Channel2]</group>
                 <key>PioneerDDJFLX4.jogTouch</key>

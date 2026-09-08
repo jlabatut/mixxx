@@ -6,6 +6,7 @@
 #include "control/controlproxy.h"
 #include "defs_urls.h"
 #include "engine/controls/ratecontrol.h"
+#include "engine/startstopramp.h"
 #include "engine/sync/enginesync.h"
 #include "mixer/basetrackplayer.h"
 #include "mixer/playermanager.h"
@@ -23,6 +24,9 @@ constexpr double kDefaultTemporaryRateChangeFine = 2.00;
 constexpr double kDefaultPermanentRateChangeCoarse = 0.50;
 constexpr double kDefaultPermanentRateChangeFine = 0.05;
 constexpr int kDefaultRateRampSensitivity = 250;
+// Both ramps are off by default, decks start and stop instantly.
+constexpr double kDefaultVinylBrakeTime = 0.0; // seconds
+constexpr double kDefaultVinylSoftStartTime = 0.0;
 constexpr double kDefaultPositionDisplayType =
         static_cast<double>(TrackTime::DisplayMode::ELAPSED_AND_REMAINING);
 // bool kDefaultCloneDeckOnLoad is defined in header file to make it available
@@ -429,6 +433,35 @@ DlgPrefDeck::DlgPrefDeck(QWidget* parent, UserSettingsPointer pConfig)
     RateControl::setPermanentRateChangeCoarseAmount(m_dRatePermCoarse);
     RateControl::setPermanentRateChangeFineAmount(m_dRatePermFine);
 
+    //
+    // Vinyl brake and soft start configuration
+    //
+
+    spinBoxVinylBrakeTime->setMaximum(StartStopRamp::kMaxRampTime);
+    spinBoxVinylSoftStartTime->setMaximum(StartStopRamp::kMaxRampTime);
+
+    connect(spinBoxVinylBrakeTime,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this,
+            &DlgPrefDeck::slotVinylBrakeTimeSpinbox);
+    connect(spinBoxVinylSoftStartTime,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this,
+            &DlgPrefDeck::slotVinylSoftStartTimeSpinbox);
+
+    m_dVinylBrakeTime = m_pConfig->getValue(
+            ConfigKey(kControlsGroup, QStringLiteral("VinylBrakeTime")),
+            kDefaultVinylBrakeTime);
+    m_dVinylSoftStartTime = m_pConfig->getValue(
+            ConfigKey(kControlsGroup, QStringLiteral("VinylSoftStartTime")),
+            kDefaultVinylSoftStartTime);
+
+    spinBoxVinylBrakeTime->setValue(m_dVinylBrakeTime);
+    spinBoxVinylSoftStartTime->setValue(m_dVinylSoftStartTime);
+
+    StartStopRamp::setBrakeTime(m_dVinylBrakeTime);
+    StartStopRamp::setSoftStartTime(m_dVinylSoftStartTime);
+
     slotUpdate();
 }
 
@@ -521,6 +554,9 @@ void DlgPrefDeck::slotUpdate() {
     spinBoxTemporaryRateFine->setValue(RateControl::getTemporaryRateChangeFineAmount());
     spinBoxPermanentRateCoarse->setValue(RateControl::getPermanentRateChangeCoarseAmount());
     spinBoxPermanentRateFine->setValue(RateControl::getPermanentRateChangeFineAmount());
+
+    spinBoxVinylBrakeTime->setValue(StartStopRamp::getBrakeTime());
+    spinBoxVinylSoftStartTime->setValue(StartStopRamp::getSoftStartTime());
 }
 
 void DlgPrefDeck::slotResetToDefaults() {
@@ -556,6 +592,10 @@ void DlgPrefDeck::slotResetToDefaults() {
     spinBoxTemporaryRateFine->setValue(2.0);
     spinBoxPermanentRateCoarse->setValue(0.50);
     spinBoxPermanentRateFine->setValue(0.05);
+
+    // Decks start and stop instantly.
+    spinBoxVinylBrakeTime->setValue(kDefaultVinylBrakeTime);
+    spinBoxVinylSoftStartTime->setValue(kDefaultVinylSoftStartTime);
 
     checkBoxResetSpeed->setChecked(false);
     checkBoxResetPitch->setChecked(true);
@@ -667,6 +707,14 @@ void DlgPrefDeck::slotRatePermFineSpinbox(double value) {
 
 void DlgPrefDeck::slotRateRampSensitivitySlider(int value) {
     m_iRateRampSensitivity = value;
+}
+
+void DlgPrefDeck::slotVinylBrakeTimeSpinbox(double value) {
+    m_dVinylBrakeTime = value;
+}
+
+void DlgPrefDeck::slotVinylSoftStartTimeSpinbox(double value) {
+    m_dVinylSoftStartTime = value;
 }
 
 void DlgPrefDeck::slotRateRampingModeLinearButton(bool checked) {
@@ -792,6 +840,16 @@ void DlgPrefDeck::slotApply() {
     m_pConfig->setValue(
             ConfigKey(kControlsGroup, QStringLiteral("RatePermRight")),
             m_dRatePermFine);
+
+    StartStopRamp::setBrakeTime(m_dVinylBrakeTime);
+    StartStopRamp::setSoftStartTime(m_dVinylSoftStartTime);
+
+    m_pConfig->setValue(
+            ConfigKey(kControlsGroup, QStringLiteral("VinylBrakeTime")),
+            m_dVinylBrakeTime);
+    m_pConfig->setValue(
+            ConfigKey(kControlsGroup, QStringLiteral("VinylSoftStartTime")),
+            m_dVinylSoftStartTime);
 }
 
 void DlgPrefDeck::slotNumDecksChanged(double new_count, bool initializing) {

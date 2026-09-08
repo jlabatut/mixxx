@@ -27,6 +27,9 @@
 //
 //      * 32 beat jump forward & back (Shift + </> CUE/LOOP CALL arrows)
 //      * Toggle quantize (Shift + channel cue)
+//      * Vinyl speed adjust: touching the jog top brakes the deck and
+//        releasing it spins the deck back up, over the vinyl brake and start
+//        times set in Preferences > Decks. Turning the platter still scratches.
 //
 //  Not implemented (after discussion and trial attempts):
 //      * Loop Section:
@@ -178,6 +181,15 @@ PioneerDDJFLX4.sendKeepAlive = function() {
 PioneerDDJFLX4.vinylMode = true;
 PioneerDDJFLX4.alpha = 1.0/8;
 PioneerDDJFLX4.beta = PioneerDDJFLX4.alpha/32;
+
+// Platter touch: a hand on the jog top brakes the deck over the vinyl brake
+// time set in the deck preferences, and releasing it spins the deck back up
+// over the vinyl start time. Scratching takes over once the platter has turned
+// this many intervals, so that a resting hand is not read as a scratch. 720
+// intervals make up one turn, so this is about 1.5 degrees.
+PioneerDDJFLX4.jogScratchThreshold = 3;
+PioneerDDJFLX4.jogTouched = [false, false];
+PioneerDDJFLX4.jogMovedWhileTouched = [0, 0];
 
 // Multiplier for fast seek through track using SHIFT+JOGWHEEL
 PioneerDDJFLX4.fastSeekScale = 150;
@@ -580,18 +592,38 @@ PioneerDDJFLX4.jogTurn = function(channel, _control, value, _status, group) {
 
     if (engine.isScratching(deckNum)) {
         engine.scratchTick(deckNum, newVal);
+    } else if (this.jogTouched[channel] && this.vinylMode &&
+            !this.shiftButtonDown[channel]) {
+        // The platter is braked. Hand it over to scratching once it has turned
+        // far enough to tell a scratch from a hand resting on it.
+        this.jogMovedWhileTouched[channel] += Math.abs(newVal);
+        if (this.jogMovedWhileTouched[channel] < this.jogScratchThreshold) {
+            return;
+        }
+        engine.setValue(group, "platter_brake", 0);
+        // Start the scratch filter from a standstill, not from the deck speed:
+        // the platter has just braked the deck down.
+        engine.scratchEnable(deckNum, 720, 33+1/3, this.alpha, this.beta, false);
+        engine.scratchTick(deckNum, newVal);
     } else { // fallback
         engine.setValue(group, "jog", newVal * this.bendScale);
     }
 };
 
 
-PioneerDDJFLX4.jogSearch = function(_channel, _control, value, _status, group) {
+PioneerDDJFLX4.jogSearch = function(channel, _control, value, _status, group) {
+    // Searching moves the deck, so it cannot stay braked by the platter.
+    PioneerDDJFLX4.releasePlatterBrake(channel, group);
     const newVal = (value - 64) * PioneerDDJFLX4.fastSeekScale;
     engine.setValue(group, "jog", newVal);
 };
 
-PioneerDDJFLX4.jogTouch = function(channel, _control, value) {
+PioneerDDJFLX4.releasePlatterBrake = function(channel, group) {
+    PioneerDDJFLX4.jogMovedWhileTouched[channel] = 0;
+    engine.setValue(group, "platter_brake", 0);
+};
+
+PioneerDDJFLX4.jogTouch = function(channel, _control, value, _status, group) {
     const deckNum = channel + 1;
 
     // skip while adjusting the loop points
@@ -599,9 +631,26 @@ PioneerDDJFLX4.jogTouch = function(channel, _control, value) {
         return;
     }
 
-    if (value !== 0 && this.vinylMode) {
-        engine.scratchEnable(deckNum, 720, 33+1/3, this.alpha, this.beta);
-    } else {
+    const touched = value !== 0;
+    this.jogTouched[channel] = touched;
+    this.jogMovedWhileTouched[channel] = 0;
+
+    if (touched && this.vinylMode) {
+        if (this.shiftButtonDown[channel]) {
+            // SHIFT + touch searches through the track. Keep the scratch
+            // filter engaged for it, it is what makes the search rate override
+            // the playback rate instead of adding to it.
+            engine.scratchEnable(deckNum, 720, 33+1/3, this.alpha, this.beta);
+            return;
+        }
+        // A hand on the platter brakes the deck, like holding a record.
+        // Scratching only takes over once the platter turns, see jogTurn.
+        engine.setValue(group, "platter_brake", 1);
+        return;
+    }
+
+    engine.setValue(group, "platter_brake", 0);
+    if (engine.isScratching(deckNum)) {
         engine.scratchDisable(deckNum);
     }
 };
@@ -802,6 +851,10 @@ PioneerDDJFLX4.quickJumpBack = function(_channel, _control, value, _status, grou
 //
 
 PioneerDDJFLX4.shutdown = function() {
+    // release the platter brake, a deck left braked would stay silent
+    PioneerDDJFLX4.releasePlatterBrake(0, "[Channel1]");
+    PioneerDDJFLX4.releasePlatterBrake(1, "[Channel2]");
+
     // reset vumeter
     PioneerDDJFLX4.toggleLight(PioneerDDJFLX4.lights.deck1.vuMeter, false);
     PioneerDDJFLX4.toggleLight(PioneerDDJFLX4.lights.deck2.vuMeter, false);
