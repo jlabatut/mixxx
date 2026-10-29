@@ -344,6 +344,17 @@ Select from different types of displays for the waveform, which differ primarily
       </widget>
      </item>
 
+     <item row="9" column="1" colspan="3">
+      <widget class="QCheckBox" name="ignoreEqCheckBox">
+       <property name="toolTip">
+        <string>Keep the waveforms unchanged when turning the EQ knobs or using the EQ kill switches, as in Rekordbox.</string>
+       </property>
+       <property name="text">
+        <string>Keep waveforms unaffected by EQ changes</string>
+       </property>
+      </widget>
+     </item>
+
      <item row="10" column="1">
       <widget class="QCheckBox" name="normalizeOverviewCheckBox">
        <property name="text">
@@ -752,6 +763,7 @@ Select from different types of displays for the waveform, which differ primarily
   <tabstop>playMarkerPositionSlider</tabstop>
   <tabstop>defaultZoomComboBox</tabstop>
   <tabstop>synchronizeZoomCheckBox</tabstop>
+  <tabstop>ignoreEqCheckBox</tabstop>
   <tabstop>normalizeOverviewCheckBox</tabstop>
   <tabstop>allVisualGain</tabstop>
   <tabstop>lowVisualGain</tabstop>

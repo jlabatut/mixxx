@@ -139,6 +139,10 @@ DlgPrefWaveform::DlgPrefWaveform(
             &QCheckBox::clicked,
             this,
             &DlgPrefWaveform::slotSetZoomSynchronization);
+    connect(ignoreEqCheckBox,
+            &QCheckBox::toggled,
+            this,
+            &DlgPrefWaveform::slotSetIgnoreEq);
     connect(allVisualGain,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
@@ -228,6 +232,7 @@ void DlgPrefWaveform::slotUpdate() {
     endOfTrackWarningTimeSpinBox->setValue(factory->getEndOfTrackWarningTime());
     endOfTrackWarningTimeSlider->setValue(factory->getEndOfTrackWarningTime());
     synchronizeZoomCheckBox->setChecked(factory->isZoomSync());
+    ignoreEqCheckBox->setChecked(factory->isEqIgnored());
     allVisualGain->setValue(factory->getVisualGain(WaveformWidgetFactory::All));
     lowVisualGain->setValue(factory->getVisualGain(WaveformWidgetFactory::Low));
     midVisualGain->setValue(factory->getVisualGain(WaveformWidgetFactory::Mid));
@@ -292,6 +297,9 @@ void DlgPrefWaveform::slotResetToDefaults() {
     defaultZoomComboBox->setCurrentIndex(3 + 1);
 
     synchronizeZoomCheckBox->setChecked(true);
+
+    // Waveforms unaffected by the EQ, as in Rekordbox.
+    ignoreEqCheckBox->setChecked(true);
 
     // RGB overview.
     waveformOverviewComboBox->setCurrentIndex(
@@ -366,6 +374,10 @@ void DlgPrefWaveform::slotSetDefaultZoom(int index) {
 
 void DlgPrefWaveform::slotSetZoomSynchronization(bool checked) {
     WaveformWidgetFactory::instance()->setZoomSync(checked);
+}
+
+void DlgPrefWaveform::slotSetIgnoreEq(bool ignored) {
+    WaveformWidgetFactory::instance()->setEqIgnored(ignored);
 }
 
 void DlgPrefWaveform::slotSetVisualGainAll(double gain) {

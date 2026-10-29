@@ -5,6 +5,7 @@
 #include "control/controlproxy.h"
 #include "util/math.h"
 #include "util/painterscope.h"
+#include "waveform/waveformwidgetfactory.h"
 
 WaveformRendererFilteredSignal::WaveformRendererFilteredSignal(
         WaveformWidgetRenderer* waveformWidgetRenderer)
@@ -238,16 +239,17 @@ void WaveformRendererFilteredSignal::draw(QPainter* painter,
 
     double lineThickness = math_max(1.0, 1.0 / m_waveformRenderer->getVisualSamplePerPixel());
 
+    const bool eqIgnored = WaveformWidgetFactory::instance()->isEqIgnored();
     painter->setPen(QPen(QBrush(m_pColors->getLowColor()), lineThickness, Qt::SolidLine, Qt::FlatCap));
-    if (m_pLowKillControlObject && m_pLowKillControlObject->get() == 0.0) {
+    if (eqIgnored || (m_pLowKillControlObject && m_pLowKillControlObject->get() == 0.0)) {
        painter->drawLines(&m_lowLines[0], actualLowLineNumber);
     }
     painter->setPen(QPen(QBrush(m_pColors->getMidColor()), lineThickness, Qt::SolidLine, Qt::FlatCap));
-    if (m_pMidKillControlObject && m_pMidKillControlObject->get() == 0.0) {
+    if (eqIgnored || (m_pMidKillControlObject && m_pMidKillControlObject->get() == 0.0)) {
         painter->drawLines(&m_midLines[0], actualMidLineNumber);
     }
     painter->setPen(QPen(QBrush(m_pColors->getHighColor()), lineThickness, Qt::SolidLine, Qt::FlatCap));
-    if (m_pHighKillControlObject && m_pHighKillControlObject->get() == 0.0) {
+    if (eqIgnored || (m_pHighKillControlObject && m_pHighKillControlObject->get() == 0.0)) {
         painter->drawLines(&m_highLines[0], actualHighLineNumber);
     }
 }
