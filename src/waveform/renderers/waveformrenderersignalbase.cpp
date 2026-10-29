@@ -187,7 +187,10 @@ void WaveformRendererSignalBase::getGains(float* pAllGain,
 
         // Only adjust low/mid/high gains if EQs are enabled.
         if (m_pEQEnabled->get() > 0.0) {
-            if (m_pLowFilterControlObject &&
+            // Bands stay at unity gain when the waveform ignores the EQ.
+            const bool followEq = !factory->isEqIgnored();
+            if (followEq &&
+                m_pLowFilterControlObject &&
                 m_pMidFilterControlObject &&
                 m_pHighFilterControlObject) {
                 lowGain = static_cast<CSAMPLE_GAIN>(m_pLowFilterControlObject->get());
@@ -202,15 +205,15 @@ void WaveformRendererSignalBase::getGains(float* pAllGain,
             highGain *= static_cast<CSAMPLE_GAIN>(
                     factory->getVisualGain(WaveformWidgetFactory::High));
 
-            if (m_pLowKillControlObject && m_pLowKillControlObject->get() > 0.0) {
+            if (followEq && m_pLowKillControlObject && m_pLowKillControlObject->get() > 0.0) {
                 lowGain = 0;
             }
 
-            if (m_pMidKillControlObject && m_pMidKillControlObject->get() > 0.0) {
+            if (followEq && m_pMidKillControlObject && m_pMidKillControlObject->get() > 0.0) {
                 midGain = 0;
             }
 
-            if (m_pHighKillControlObject && m_pHighKillControlObject->get() > 0.0) {
+            if (followEq && m_pHighKillControlObject && m_pHighKillControlObject->get() > 0.0) {
                 highGain = 0;
             }
         }

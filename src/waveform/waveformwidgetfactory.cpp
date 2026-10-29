@@ -146,6 +146,7 @@ WaveformWidgetFactory::WaveformWidgetFactory()
           m_beatGridAlpha(90),
           m_measureMarkersEnabled(true),
           m_beatsPerMeasure(WaveformWidgetRenderer::s_defaultBeatsPerMeasure),
+          m_eqIgnored(true),
           m_vsyncThread(nullptr),
           m_pGuiTick(nullptr),
           m_pVisualsManager(nullptr),
@@ -410,6 +411,8 @@ bool WaveformWidgetFactory::setConfig(UserSettingsPointer config) {
             WaveformWidgetRenderer::s_minBeatsPerMeasure,
             WaveformWidgetRenderer::s_maxBeatsPerMeasure);
     applyBeatsPerMeasure();
+
+    m_eqIgnored = m_config->getValue(ConfigKey("[Waveform]", "IgnoreEQ"), m_eqIgnored);
 
     WaveformWidgetType::Type type = static_cast<WaveformWidgetType::Type>(
             m_config->getValueString(ConfigKey("[Waveform]","WaveformType")).toInt(&ok));
@@ -750,6 +753,13 @@ void WaveformWidgetFactory::setBeatsPerMeasure(int beatsPerMeasure) {
 void WaveformWidgetFactory::applyBeatsPerMeasure() {
     for (const auto& holder : std::as_const(m_waveformWidgetHolders)) {
         holder.m_waveformWidget->setBeatsPerMeasure(effectiveBeatsPerMeasure());
+    }
+}
+
+void WaveformWidgetFactory::setEqIgnored(bool ignored) {
+    m_eqIgnored = ignored;
+    if (m_config) {
+        m_config->setValue(ConfigKey("[Waveform]", "IgnoreEQ"), m_eqIgnored);
     }
 }
 

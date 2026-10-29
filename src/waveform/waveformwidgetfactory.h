@@ -152,6 +152,12 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
         return m_beatsPerMeasure;
     }
 
+    /// When set, EQ knobs and kills no longer change the waveforms.
+    void setEqIgnored(bool ignored);
+    bool isEqIgnored() const {
+        return m_eqIgnored;
+    }
+
     void setVisualGain(FilterIndex index, double gain);
     double getVisualGain(FilterIndex index) const;
 
@@ -254,6 +260,7 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     int m_beatGridAlpha;
     bool m_measureMarkersEnabled;
     int m_beatsPerMeasure;
+    bool m_eqIgnored;
 
     VSyncThread* m_vsyncThread;
     GuiTick* m_pGuiTick;  // not owned
