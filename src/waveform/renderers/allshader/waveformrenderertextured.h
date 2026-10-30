@@ -40,6 +40,9 @@ class allshader::WaveformRendererTextured : public QObject,
   public slots:
     void slotWaveformUpdated();
 
+  protected:
+    float visualAmplitude(const WaveformData& data) const override;
+
   private:
     static QString fragShaderForType(Type t);
     bool loadShaders();

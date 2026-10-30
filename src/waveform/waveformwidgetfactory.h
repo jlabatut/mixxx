@@ -158,6 +158,13 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
         return m_eqIgnored;
     }
 
+    /// When set, the loudest part of each track fills the waveform height and
+    /// the track gain no longer changes the waveforms.
+    void setWaveformNormalized(bool normalized);
+    bool isWaveformNormalized() const {
+        return m_waveformNormalized;
+    }
+
     void setVisualGain(FilterIndex index, double gain);
     double getVisualGain(FilterIndex index) const;
 
@@ -261,6 +268,7 @@ class WaveformWidgetFactory : public QObject, public Singleton<WaveformWidgetFac
     bool m_measureMarkersEnabled;
     int m_beatsPerMeasure;
     bool m_eqIgnored;
+    bool m_waveformNormalized;
 
     VSyncThread* m_vsyncThread;
     GuiTick* m_pGuiTick;  // not owned

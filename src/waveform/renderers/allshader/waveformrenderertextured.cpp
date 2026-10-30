@@ -2,6 +2,8 @@
 
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
+#include <algorithm>
+#include <cmath>
 
 #include "moc_waveformrenderertextured.cpp"
 #include "track/track.h"
@@ -25,6 +27,22 @@ QString WaveformRendererTextured::fragShaderForType(WaveformRendererTextured::Ty
     }
     DEBUG_ASSERT(!"unsupported WaveformWidgetType");
     return QString();
+}
+
+float WaveformRendererTextured::visualAmplitude(const WaveformData& data) const {
+    const float low = data.filtered.low;
+    const float mid = data.filtered.mid;
+    const float high = data.filtered.high;
+    // Mirrors the height computed by each fragment shader.
+    switch (m_type) {
+    case Type::Filtered:
+        return std::max({low, mid, high});
+    case Type::RGB:
+        return std::sqrt((low * low + mid * mid + high * high) / 3.0f);
+    case Type::Stacked:
+        return (low + mid + high) / std::sqrt(3.0f);
+    }
+    return data.filtered.all;
 }
 
 WaveformRendererTextured::WaveformRendererTextured(WaveformWidgetRenderer* waveformWidget,

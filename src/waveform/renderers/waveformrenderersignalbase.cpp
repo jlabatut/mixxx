@@ -2,11 +2,14 @@
 
 #include "control/controlproxy.h"
 #include "util/colorcomponents.h"
+#include "util/math.h"
 #include "waveform/waveformwidgetfactory.h"
 #include "waveformwidgetrenderer.h"
 
 namespace {
 const QString kEffectGroupFormat = QStringLiteral("[EqualizerRack1_%1_Effect1]");
+// Share of the waveform height filled by the track peak when normalized.
+constexpr float kNormalizedPeakHeight = 0.95f;
 } // namespace
 
 WaveformRendererSignalBase::WaveformRendererSignalBase(
@@ -46,7 +49,9 @@ WaveformRendererSignalBase::WaveformRendererSignalBase(
           m_rgbMidColor_b(0),
           m_rgbHighColor_r(0),
           m_rgbHighColor_g(0),
-          m_rgbHighColor_b(0) {
+          m_rgbHighColor_b(0),
+          m_peakScannedSize(0),
+          m_peakAmplitude(0.0f) {
 }
 
 WaveformRendererSignalBase::~WaveformRendererSignalBase() {
@@ -176,9 +181,15 @@ void WaveformRendererSignalBase::getGains(float* pAllGain,
         float* pHighGain) {
     WaveformWidgetFactory* factory = WaveformWidgetFactory::instance();
     if (pAllGain) {
-        *pAllGain = static_cast<CSAMPLE_GAIN>(m_waveformRenderer->getGain(applyCompensation)) *
-                static_cast<CSAMPLE_GAIN>(factory->getVisualGain(WaveformWidgetFactory::All));
-        ;
+        if (factory->isWaveformNormalized()) {
+            // Ignores the track gain and the overall visual gain.
+            *pAllGain = normalizedGain();
+        } else {
+            *pAllGain = static_cast<CSAMPLE_GAIN>(
+                                m_waveformRenderer->getGain(applyCompensation)) *
+                    static_cast<CSAMPLE_GAIN>(
+                            factory->getVisualGain(WaveformWidgetFactory::All));
+        }
     }
 
     if (pLowGain || pMidGain || pHighGain) {
@@ -228,6 +239,29 @@ void WaveformRendererSignalBase::getGains(float* pAllGain,
             *pHighGain = highGain;
         }
     }
+}
+
+float WaveformRendererSignalBase::normalizedGain() {
+    ConstWaveformPointer pWaveform = m_waveformRenderer->getWaveform();
+    if (!pWaveform || pWaveform->getDataSize() <= 0) {
+        return 1.0f;
+    }
+    if (pWaveform != m_pPeakWaveform) {
+        m_pPeakWaveform = pWaveform;
+        m_peakScannedSize = 0;
+        m_peakAmplitude = 0.0f;
+    }
+
+    const int analyzedSize = math_min(pWaveform->getCompletion(), pWaveform->getDataSize());
+    const WaveformData* data = pWaveform->data();
+    for (; m_peakScannedSize < analyzedSize; ++m_peakScannedSize) {
+        m_peakAmplitude = math_max(m_peakAmplitude, visualAmplitude(data[m_peakScannedSize]));
+    }
+
+    if (m_peakAmplitude <= 0.0f) {
+        return 1.0f;
+    }
+    return kNormalizedPeakHeight * 255.0f / m_peakAmplitude;
 }
 
 std::span<float, 256> WaveformRendererSignalBase::unscaleTable() {

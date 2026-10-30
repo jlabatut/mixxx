@@ -2,6 +2,7 @@
 
 #include "skin/legacy/skincontext.h"
 #include "util/span.h"
+#include "waveform/waveform.h"
 #include "waveformrendererabstract.h"
 
 class ControlProxy;
@@ -26,6 +27,11 @@ public:
             float* pLowGain,
             float* pMidGain,
             float* highGain);
+
+    /// Height of one data point on the 0-255 scale that allGain multiplies.
+    virtual float visualAmplitude(const WaveformData& data) const {
+        return data.filtered.all;
+    }
 
     static std::span<float, 256> unscaleTable();
     inline float unscale(unsigned char value) {
@@ -60,4 +66,12 @@ public:
     float m_rgbLowFilteredColor_r, m_rgbLowFilteredColor_g, m_rgbLowFilteredColor_b;
     float m_rgbMidFilteredColor_r, m_rgbMidFilteredColor_g, m_rgbMidFilteredColor_b;
     float m_rgbHighFilteredColor_r, m_rgbHighFilteredColor_g, m_rgbHighFilteredColor_b;
+
+  private:
+    float normalizedGain();
+
+    // Track peak, scanned incrementally while the waveform is analyzed.
+    ConstWaveformPointer m_pPeakWaveform;
+    int m_peakScannedSize;
+    float m_peakAmplitude;
 };
