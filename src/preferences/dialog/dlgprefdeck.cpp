@@ -249,6 +249,7 @@ DlgPrefDeck::DlgPrefDeck(QWidget* parent, UserSettingsPointer pConfig)
     ComboBoxRateRange->addItem(tr("24%"), 24);
     ComboBoxRateRange->addItem(tr("50%"), 50);
     ComboBoxRateRange->addItem(tr("90%"), 90);
+    ComboBoxRateRange->addItem(tr("100% (WIDE)"), 100);
     connect(ComboBoxRateRange,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             this,
@@ -273,7 +274,7 @@ DlgPrefDeck::DlgPrefDeck(QWidget* parent, UserSettingsPointer pConfig)
                 ConfigKey(kControlsGroup, QStringLiteral("RateRangePercent")),
                 kDefaultRateRangePercent);
     }
-    if (!(m_iRateRangePercent > 0 && m_iRateRangePercent <= 90)) {
+    if (!(m_iRateRangePercent > 0 && m_iRateRangePercent <= 100)) {
         m_iRateRangePercent = kDefaultRateRangePercent;
     }
     setRateRangeForAllDecks(m_iRateRangePercent);

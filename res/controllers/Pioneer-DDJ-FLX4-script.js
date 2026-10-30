@@ -195,7 +195,8 @@ PioneerDDJFLX4.jogMovedWhileTouched = [0, 0];
 PioneerDDJFLX4.fastSeekScale = 150;
 PioneerDDJFLX4.bendScale = 0.8;
 
-PioneerDDJFLX4.tempoRanges = [0.06, 0.10, 0.16, 0.25];
+// The last range is WIDE (100%). Decks start on the first one.
+PioneerDDJFLX4.tempoRanges = [0.06, 0.10, 0.16, 1.00];
 
 PioneerDDJFLX4.shiftButtonDown = [false, false];
 
@@ -253,6 +254,9 @@ PioneerDDJFLX4.init = function() {
 
     PioneerDDJFLX4.toggleLight(PioneerDDJFLX4.lights.deck1.vuMeter, false);
     PioneerDDJFLX4.toggleLight(PioneerDDJFLX4.lights.deck2.vuMeter, false);
+
+    engine.setValue("[Channel1]", "rateRange", PioneerDDJFLX4.tempoRanges[0]);
+    engine.setValue("[Channel2]", "rateRange", PioneerDDJFLX4.tempoRanges[0]);
 
     engine.softTakeover("[Channel1]", "rate", true);
     engine.softTakeover("[Channel2]", "rate", true);

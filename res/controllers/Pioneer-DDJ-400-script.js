@@ -111,7 +111,8 @@ PioneerDDJ400.beta = PioneerDDJ400.alpha/32;
 PioneerDDJ400.fastSeekScale = 150;
 PioneerDDJ400.bendScale = 0.8;
 
-PioneerDDJ400.tempoRanges = [0.06, 0.10, 0.16, 0.25];
+// The last range is WIDE (100%). Decks start on the first one.
+PioneerDDJ400.tempoRanges = [0.06, 0.10, 0.16, 1.00];
 
 PioneerDDJ400.shiftButtonDown = [false, false];
 
@@ -169,6 +170,9 @@ PioneerDDJ400.init = function() {
 
     PioneerDDJ400.toggleLight(PioneerDDJ400.lights.deck1.vuMeter, false);
     PioneerDDJ400.toggleLight(PioneerDDJ400.lights.deck2.vuMeter, false);
+
+    engine.setValue("[Channel1]", "rateRange", PioneerDDJ400.tempoRanges[0]);
+    engine.setValue("[Channel2]", "rateRange", PioneerDDJ400.tempoRanges[0]);
 
     engine.softTakeover("[Channel1]", "rate", true);
     engine.softTakeover("[Channel2]", "rate", true);

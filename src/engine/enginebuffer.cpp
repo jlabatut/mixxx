@@ -930,13 +930,14 @@ void EngineBuffer::processTrackLocked(
 
     // TODO(owen): Maybe change this so that rubberband doesn't disable
     // keylock on scratch. (just check m_pScaleKeylock == m_pScaleST)
-    if (is_scratching || fabs(speed) > 1.9) {
+    if (is_scratching || fabs(speed) > 2.5) {
         // Scratching and high speeds with always disables keylock
         // because Soundtouch sounds terrible in these conditions.  Rubberband
         // sounds better, but still has some problems (it may reallocate in
         // a party-crashing manner at extremely slow speeds).
-        // High seek speeds also disables keylock.  Our pitch slider could go
-        // to 90%, so that's the cutoff point.
+        // High seek speeds also disables keylock.  Our pitch slider can go
+        // to 100%, so the cutoff leaves room for nudging above 2x while
+        // staying below the 4x fast seek.
 
         // Force pitchRatio to the linear pitch set by speed
         pitchRatio = speed;
