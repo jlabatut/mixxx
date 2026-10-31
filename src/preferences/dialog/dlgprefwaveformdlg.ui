@@ -362,6 +362,16 @@ Select from different types of displays for the waveform, which differ primarily
        </property>
       </widget>
      </item>
+     <item row="10" column="2" colspan="2">
+      <widget class="QCheckBox" name="normalizeWaveformCheckBox">
+       <property name="toolTip">
+        <string>Scale each track so its loudest part fills the waveform height. The track gain and the overall visual gain no longer change the waveforms.</string>
+       </property>
+       <property name="text">
+        <string>Normalize waveform height</string>
+       </property>
+      </widget>
+     </item>
 
      <item row="11" column="0">
       <widget class="QLabel" name="visualGainLabel">
@@ -765,6 +775,7 @@ Select from different types of displays for the waveform, which differ primarily
   <tabstop>synchronizeZoomCheckBox</tabstop>
   <tabstop>ignoreEqCheckBox</tabstop>
   <tabstop>normalizeOverviewCheckBox</tabstop>
+  <tabstop>normalizeWaveformCheckBox</tabstop>
   <tabstop>allVisualGain</tabstop>
   <tabstop>lowVisualGain</tabstop>
   <tabstop>midVisualGain</tabstop>

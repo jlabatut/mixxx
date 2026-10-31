@@ -147,6 +147,7 @@ WaveformWidgetFactory::WaveformWidgetFactory()
           m_measureMarkersEnabled(true),
           m_beatsPerMeasure(WaveformWidgetRenderer::s_defaultBeatsPerMeasure),
           m_eqIgnored(true),
+          m_waveformNormalized(false),
           m_vsyncThread(nullptr),
           m_pGuiTick(nullptr),
           m_pVisualsManager(nullptr),
@@ -413,6 +414,8 @@ bool WaveformWidgetFactory::setConfig(UserSettingsPointer config) {
     applyBeatsPerMeasure();
 
     m_eqIgnored = m_config->getValue(ConfigKey("[Waveform]", "IgnoreEQ"), m_eqIgnored);
+    m_waveformNormalized = m_config->getValue(
+            ConfigKey("[Waveform]", "WaveformNormalized"), m_waveformNormalized);
 
     WaveformWidgetType::Type type = static_cast<WaveformWidgetType::Type>(
             m_config->getValueString(ConfigKey("[Waveform]","WaveformType")).toInt(&ok));
@@ -760,6 +763,13 @@ void WaveformWidgetFactory::setEqIgnored(bool ignored) {
     m_eqIgnored = ignored;
     if (m_config) {
         m_config->setValue(ConfigKey("[Waveform]", "IgnoreEQ"), m_eqIgnored);
+    }
+}
+
+void WaveformWidgetFactory::setWaveformNormalized(bool normalized) {
+    m_waveformNormalized = normalized;
+    if (m_config) {
+        m_config->setValue(ConfigKey("[Waveform]", "WaveformNormalized"), m_waveformNormalized);
     }
 }
 

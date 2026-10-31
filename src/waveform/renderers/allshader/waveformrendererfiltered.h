@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "shaders/unicolorshader.h"
 #include "util/class.h"
 #include "waveform/renderers/allshader/vertexdata.h"
@@ -18,6 +20,12 @@ class allshader::WaveformRendererFiltered final : public allshader::WaveformRend
 
     void initializeGL() override;
     void paintGL() override;
+
+  protected:
+    // Bands are drawn on top of each other, the tallest sets the height.
+    float visualAmplitude(const WaveformData& data) const override {
+        return std::max({data.filtered.low, data.filtered.mid, data.filtered.high});
+    }
 
   private:
     const bool m_bRgbStacked;
